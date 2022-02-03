@@ -16,13 +16,7 @@ class API_usage:
         hed = {'Content-Type': 'application/x-www-form-urlencoded'} #'accept': 'application/json',
         data = {'username':secrets.USERNAME,
                 'password':secrets.PASS}
-        
-        #data = {'username':'miannini',
-        #        'password':'admin1234'}
-        #data_ready = '&'.join('{}:{}'.format(key, value) for key, value in data.items())
-        
         url = secrets.URL
-        #url = 'https://data-science-proj-280908.ue.r.appspot.com/'
         login = 'token'
         
         response = requests.post(url+login, data=data, headers=hed)
@@ -108,6 +102,13 @@ class API_usage:
         else:
             print('error')
         return df
+    
+    def patch_lote(token,data_row,id_lote):
+        hed = {'accept': 'application/json',
+               'Authorization': "Bearer "+token}
+        path = 'Lotes_upd/'
+        response = requests.patch(url+path+str(id_lote), json = data_row ,headers=hed)
+        print(response.status_code)
         
         
         

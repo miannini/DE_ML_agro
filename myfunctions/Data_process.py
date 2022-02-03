@@ -42,16 +42,23 @@ class Data_Process:
             json.dump(dic3, outfile,sort_keys=True, indent=4)
             
         return data_ind
-    def seguimiento_lotes_proc(seguimiento, data, destination):
+    def seguimiento_lotes_proc(seguimiento, lotes, destination):
         
-        seguimiento['FECHA ACTIVIDAD'] = pd.to_datetime(seguimiento['FECHA ACTIVIDAD'], format='%m/%d/%Y') #format the date
-        seguimiento['FECHA ENTRADA'] = pd.to_datetime(seguimiento['FECHA ENTRADA'], format='%m/%d/%Y') #format the date
-        seguimiento['FECHA SALIDA'] = pd.to_datetime(seguimiento['FECHA SALIDA'], format='%m/%d/%Y') #format the date
-        seguimiento['FECHA PROYECTADA FUMIGACION'] = pd.to_datetime(seguimiento['FECHA PROYECTADA FUMIGACION'], format='%m/%d/%Y') #format the date
+        #seguimiento['FECHA ACTIVIDAD'] = pd.to_datetime(seguimiento['FECHA ACTIVIDAD'], format='%y/%d/%Y') #format the date
+        #seguimiento['FECHA ENTRADA'] = pd.to_datetime(seguimiento['FECHA ENTRADA'], format='%m/%d/%Y') #format the date
+        #seguimiento['FECHA SALIDA'] = pd.to_datetime(seguimiento['FECHA SALIDA'], format='%m/%d/%Y') #format the date
+        #seguimiento['FECHA PROYECTADA FUMIGACION'] = pd.to_datetime(seguimiento['FECHA PROYECTADA FUMIGACION'], format='%m/%d/%Y') #format the date
+        
+        seguimiento['FECHA ACTIVIDAD'] = pd.to_datetime(seguimiento['FECHA ACTIVIDAD'], format='%Y-%m-%d %H:%M:%S', errors='coerce') #format the date
+        seguimiento['FECHA ENTRADA'] = pd.to_datetime(seguimiento['FECHA ENTRADA'], format='%Y-%m-%d %H:%M:%S', errors='coerce') #format the date
+        seguimiento['FECHA SALIDA'] = pd.to_datetime(seguimiento['FECHA SALIDA'], format='%Y-%m-%d %H:%M:%S', errors='coerce') #format the date
+        seguimiento['FECHA PROYECTADA FUMIGACION'] = pd.to_datetime(seguimiento['FECHA PROYECTADA FUMIGACION'], format='%Y-%m-%d %H:%M:%S', errors='coerce') #format the date
+        
         
         #fix names to match data
         seguimiento['lote_c'] =  None
         #funcion para corregir nombre de finca
+        #seguimiento['FINCA'] = seguimiento['FINCA'].astype(int)
         seguimiento['lote_c'] =  seguimiento.apply(lambda row: Tools.finca_cor(row['FINCA'],row['POTRERO']), axis=1)
         seguimiento['lote_c'] = seguimiento['lote_c'].apply(lambda x: Tools.corr_num(x) if x is not None else x)
                  
@@ -99,9 +106,9 @@ class Data_Process:
         
         #list dates at daily interval 
         dates_list = Tools.lista_dates(seguimiento,'FECHA ACTIVIDAD',1) 
+    
         
-        #join dates and lotes-bands        
-        base2 = Tools.self_join(dates_list, data,['lote_id','nombre_lote'])
+        base2 = Tools.self_join(dates_list, lotes,['lote_id','nombre_lote'])
         base2.rename(columns={"nombre_lote": "name_c"}, inplace=True)
         #join base and real data SEGUIMIENTO
         full_seguimiento = base2.merge(seguimiento, how='left', left_on=['name_c','date'], right_on=['lote_c','FECHA ACTIVIDAD'])
@@ -109,7 +116,7 @@ class Data_Process:
         full_seguimiento = full_seguimiento.sort_values(by=['lote_id','date'])
         full_seguimiento.reset_index(drop = True, inplace=True)
         
-        return full_seguimiento
+        return full_seguimiento, pasto_actual, otras
     
     def lag_hatos(data, destination): #full_seguimiento
         data_hato = data.copy()

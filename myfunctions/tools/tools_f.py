@@ -28,15 +28,16 @@ class Tools:
             return base2
 
     def finca_cor(finca, potrero):
+            potrero = str(potrero)
             if finca == 'EL RECODO': #finca
                 try: 
-                    number = float(potrero)
+                    number = int(potrero)
                     if number < 10:
                         return 'RC' + '0' + potrero
                     else:
                         return 'RC'  + potrero
                 except:
-                    if 'T' in potrero:
+                    if 'T' in str(potrero):
                         return potrero[-1] + potrero[0]
             elif finca == 'JUNCAL':
                 return 'Juncalito-Lote_' + potrero
@@ -47,7 +48,7 @@ class Tools:
             elif finca == 'MANGA LARGA':
                 return 'La_Isla-Lote_ML_' + potrero
             elif finca == 'RANCHO': #posiblemente es T
-                number = float(potrero)
+                number = int(potrero)
                 if number < 10:
                     return 'RANCHO' + '0' + potrero
                 else:
@@ -67,6 +68,8 @@ class Tools:
     def lista_dates(df,column,offset):
         min_date = min(df[column]); max_date = max(df[column])
         #create list of dates with interval
+        dates_list = pd.date_range(start=min_date,end=max_date)
+        '''
         len_dates = int((max_date-min_date).days / offset)
         dates_list = []
         for n in range(0,len_dates+1):
@@ -75,6 +78,7 @@ class Tools:
             else:
                 fecha = fecha + datetime.timedelta(days=offset)
             dates_list.append(fecha)
+        '''
         return dates_list
     
     def self_join(dates_list, data, list_cols): #'lote_id','name_c','band'

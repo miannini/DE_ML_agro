@@ -81,7 +81,33 @@ full_prop_good, dates_change, list_elements, dates_list, full_prop = Chemical_pr
 full_prop, unir lote_id, quitar finca y poner finca_id, sector como comentarios
 quitar anio y CE
 hacer analisis de correlacion entre elementos
-export corrected chem props to be uploaded in SQL table // crear tabla en SQL
+API lista: Wr_lotes_quimicos
+
+version resumida de 'resumen_lotes_medidas' enviar a database usando API
+    start=time.time()
+    #define columns, rename as per API and format dates 
+    reduced_columns=['lote_id','date','mean_value._bm','mean_value._cp','mean_value._ndf','mean_value._lai','mean_value._ndvi','cld_percentage','area_factor','biomass_corrected']
+    reduced_flat = flattened.loc[:,flattened.columns.isin(reduced_columns)]
+    reduced_flat.rename(columns={'lote_id':'ID_lote','date':'fecha','mean_value._bm':'Mean_BM','mean_value._cp':'Mean_CP','mean_value._ndf':'Mean_NDF','mean_value._lai':'Mean_LAI','mean_value._ndvi':'Mean_NDVI'}, inplace=True)
+    reduced_flat['fecha'] = pd.to_datetime(reduced_flat['fecha'], format="%Y%m%d").dt.strftime('%Y-%m-%d')
+    #reorder columns as per API
+    cols = reduced_flat.columns.tolist()
+    cols = cols[1:2] + cols[0:1] + cols[2:]
+    reduced_flat = reduced_flat[cols] 
+    #to dictionary
+    data_dict = reduced_flat.to_dict(orient='records')
+    #loop each row, remove nan and post API
+    for data_row in data_dict:
+        to_del=[]
+        for k,v in data_row.items():
+            if type(v) == float and math.isnan(v):
+                print(k,'delete')
+                to_del.append(k)
+        for n in to_del:
+            data_row.pop(n)
+        API_usage.post_lote_var(token,data_row)
+    end = time.time()
+    print(end - start) 
 '''
 
 ##########################################################################################################3
@@ -148,7 +174,8 @@ plt.scatter(df2.index, df2['Model_accuracy'], #alpha=0.3,
 #dates_list
 '''
 5- interpolar en fechas faltantes con PAD
-esto queda muy grande y pesado
+esto queda muy grande y pesado, evaluar si se puede eiliminar
+codigo abajo usar para cuando se necesite en el modelo de ML
 '''
 base2 = Tools.self_join(dates_list, data_geo,['name_c','x','y']) #['lote_id','name_c','band'])
 
