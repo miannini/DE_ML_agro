@@ -7,24 +7,19 @@ Created on Fri Jul  9 10:09:23 2021
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 import datetime
+from ..secrets.secret_keys import account_sid, auth_token, phoneSID, twilioNumber
 
 
 # Your Account SID from twilio.com/console
-account_sid = "ACa8304315906d804a358f9bff26fc0a05"
+#account_sid = "SID"
 
 # Your Auth Token from twilio.com/console
-auth_token  = "98f0caedadd311d358924367a4e198c1"
+#auth_token  = "token"
 
 #Twilio number
-phoneSID = "PN94b59cb75dec21eb152966ce2023ab57"
-twilioNumber = "+18018212669"
+#phoneSID = "number from secrets"
+#twilioNumber = "number UsA"
 
-#Andres
-'''
-account_sid = "ACfa4fc4e8890a5283f889511b6a052745"
-auth_token = "891606df94445ec3ea67aeccffcf987c"
-twilioNumber = "+18178131257"
-'''
 
 hoy = datetime.date.today().strftime("%Y/%m/%d")
 client = Client(account_sid, auth_token)

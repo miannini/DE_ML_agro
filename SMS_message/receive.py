@@ -9,13 +9,8 @@ from datetime import timedelta
 import os
 import pandas as pd
 from twilio.rest import Client
+from ..secrets.secret_keys import account_sid, auth_token, phoneSID, twilioNumber
 
-# Your Account SID from twilio.com/console
-account_sid = "ACa8304315906d804a358f9bff26fc0a05"
-# Your Auth Token from twilio.com/console
-auth_token  = "98f0caedadd311d358924367a4e198c1"
-#Twilio number
-twilioNumber = "+18018212669"
 
 # Find your Account SID and Auth Token at twilio.com/console
 # and set the environment variables. See http://twil.io/secure

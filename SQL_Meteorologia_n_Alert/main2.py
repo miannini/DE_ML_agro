@@ -9,11 +9,12 @@ import numpy as np
 import sqlalchemy as sa
 from datetime import datetime
 from datetime import timedelta
+from ..secrets.secret_keys import EMAIL_API_KEY
 
 DB_USER = 'm4a.MI'
 PASSWORD = 'm4a2020'
 IP = '35.185.0.199'
-EMAIL_API_KEY = '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'
+#EMAIL_API_KEY = 'from secrets'
 
 '''
 db_user = os.environ["DB_USER"]
